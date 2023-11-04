@@ -1,7 +1,7 @@
 #ifndef U05_ARBOL_ARBOL_ARBOLBINARIOAVL_H_
 #define U05_ARBOL_ARBOL_ARBOLBINARIOAVL_H_
 
-#include "../Parcial_2/NodoarbolAVL.h"
+#include "../ProyectoProgramacion3/NodoarbolAVL.h"
 
 template <class T>
 class ArbolBinarioAVL

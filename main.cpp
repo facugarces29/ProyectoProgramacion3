@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include "../Parcial_2/ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
+#include "../ProyectoProgramacion3/ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
 
 struct Producto {
     std::string grupo;
