@@ -1,7 +1,7 @@
 #ifndef U05_ARBOL_ARBOL_ARBOLBINARIOAVL_H_
 #define U05_ARBOL_ARBOL_ARBOLBINARIOAVL_H_
 
-#include "../ProyectoProgramacion3/NodoarbolAVL.h"
+#include "NodoarbolAVL.h"
 
 template <class T>
 class ArbolBinarioAVL
@@ -192,12 +192,24 @@ NodoArbolAVL<T> *ArbolBinarioAVL<T>::put(T data, NodoArbolAVL<T> *r) {
     if (r == nullptr) {
         return new NodoArbolAVL<T>(data);
     }
+    
+    if(r->getData() == data){
+      throw 200;
+    }
 
+    if (r->getData() > data){
+      r->setLeft(put(data,r->getLeft()));
+    }else
+    {
+      r->setRight(put(data,r->getRight()));
+    }
+    
+    /*
     if (data < r->getData()) {  // Utilizamos el operador de comparación <
         r->setLeft(put(data, r->getLeft()));
     } else if (r->getData() < data) {  // Utilizamos el operador de comparación <
         r->setRight(put(data, r->getRight()));
-    }
+    }*/
   r->setHeight(max(calculateHeight(r->getLeft()), calculateHeight(r->getRight())) + 1);
   int balance = getBalance(r);
 
