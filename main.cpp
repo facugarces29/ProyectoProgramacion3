@@ -5,14 +5,16 @@
 #include <vector>
 #include <set>
 #include "ArbolAVL.h" //Supongo que aquí se incluirá el código del árbol AVL
-
+#include "HashMap/HashMap.h"
+//1061 articulos
 using namespace std;
 
 struct Producto {
     string grupo;
     string codigoBarras;
     string nombre;
-    int depositos[5];
+    vector<int> depositos;
+
 
     // Definimos un operador de comparación para comparar productos por su código de barras
     bool operator<(const Producto& other) const {
@@ -40,6 +42,9 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
     }
 
     string linea, valor;
+    getline(archivo, linea); // Ignorar la primera línea
+
+
     while (getline(archivo, linea)) {
         vector<string> fila;
         stringstream ss(linea);
@@ -53,35 +58,82 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
 
     archivo.close();
     return datos;
-}
+};
+
+
+
+bool esEnteroValido(const std::string& str) {
+    for (char c : str) {
+        if (!std::isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+};
+
+int convertir_a_entero(const std::string& str) {
+    try {
+        return std::stoi(str);
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Error al convertir a entero: " << e.what() << std::endl;
+    } catch (const std::out_of_range& e) {
+        std::cerr << "Error: Desbordamiento de rango. " << e.what() << std::endl;
+    }
+    return -1;
+};
 
 int cantidadTotalArticulos(const vector<vector<string>>& datos) {
-    return datos.size();
-}
+    int total = 0;
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4 && esEnteroValido(fila[3])) { 
+            try {
+                int stock = stoi(fila[3]);
+                total += stock;
+            } catch (const std::invalid_argument& e) {
+                cerr << "Error al convertir a entero en fila: " << e.what() << std::endl;
+            }
+        } else {
+            cerr << "Fila incompleta o el stock no es un número válido." << std::endl;
+        }
+    }
+    return total;
+};
+
+
 
 int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     set<string> codigosBarras;
 
     for (const vector<string>& fila : datos) {
-        string codigoBarras = fila[1]; // Suponiendo que la columna del código de barras es la segunda (índice 1)
-        codigosBarras.insert(codigoBarras);
+        if (fila.size() >= 2) { // Verificar que hay al menos 2 elementos en la fila (para obtener el código de barras)
+            string codigoBarras = fila[1]; // Suponiendo que la columna del código de barras es la segunda (índice 1)
+            codigosBarras.insert(codigoBarras);
+        }
     }
 
     return codigosBarras.size();
-}
+};
+
 
 void listarArticulosMinimoStock(const vector<vector<string>>& datos, int minStock) {
     cout << "Artículos con stock igual o menor a " << minStock << ":" << endl;
 
+    HashMap<string, int> stockPorArticulo;
+
     for (const vector<string>& fila : datos) {
-        int stock = stoi(fila[3]); // La cantidad de stock está en la cuarta columna (índice 3)
-        
-        if (stock <= minStock) {
-            cout << "Código: " << fila[1] << ", Nombre: " << fila[2] << ", Stock: " << stock << endl;
+        if (fila.size() >= 4 && esEnteroValido(fila[3])) {
+            string codigoBarras = fila[1];
+            int stock = stoi(fila[3]);
+            stockPorArticulo[codigoBarras] += stock;
+        }
+    }
+
+    for (const auto& par : stockPorArticulo) {
+        if (par.second <= minStock) {
+            cout << "Código: " << par.first << ", Stock: " << par.second << endl;
         }
     }
 }
-
 void stockIndividualArticulo(const vector<vector<string>>& datos, const string& nombreArticulo) {
     cout << "Stock individual del artículo '" << nombreArticulo << "':" << endl;
 
@@ -90,10 +142,12 @@ void stockIndividualArticulo(const vector<vector<string>>& datos, const string& 
             cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
         }
     }
-}
+};
+
+
 void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
     if (argc < 3) {
-        cerr << "Uso: " << argv[0] << " [Argumentos] inventariofisico.csv" << endl;
+        cerr << "Uso: " << argv[0] << " [Argumentos] Inventariado_Fisico.csv" << endl;
         return;
     }
 
@@ -123,68 +177,24 @@ void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& da
     } else {
         std::cerr << "Operación no válida." << std::endl;
     }
-}
+};
+
+void mostrarDatosCSV(const vector<vector<string>>& datos) {
+    for (const vector<string>& fila : datos) {
+        for (const string& valor : fila) {
+            cout << valor << ",";
+        }
+        cout << endl;
+    }
+};
+
 int main(int argc, char* argv[]) {
     string nombreArchivo = "Inventariado_Fisico.csv";
     vector<vector<string>> datos = leerArchivoCSV(nombreArchivo);
 
     procesarArgumentos(argc, argv, datos);
+    //mostrarDatosCSV(datos);
 
     return 0;
 }
 
-/*
-int main() {
-    // Crear el árbol AVL
-    ArbolBinarioAVL<Producto> arbol;
-
-    // Nombre del archivo CSV
-    string archivoCSV = "Inventariado_Fisico.csv";
-
-    // Abrir el archivo
-    ifstream archivo(archivoCSV);
-
-   if (!archivo.is_open()) {
-        cout << "Error al abrir el archivo CSV." << endl;
-        return 1;
-    }
-
-    // Variables para almacenar los datos del archivo
-    string linea;
-    char delimitador = ',';
-
-    // Leer el archivo línea por línea
-    while (getline(archivo, linea)) {
-        stringstream ss(linea);
-        string grupo, codigoBarras, nombre;
-        int depositos[5]; // Ajusta el tamaño según tus necesidades
-
-        // Leer datos usando el delimitador ","
-        getline(ss, grupo, delimitador);
-        ss >> codigoBarras;
-        ss.ignore(); // Ignorar la coma
-        getline(ss, nombre, delimitador);
-
-        for (int i = 0; i < 5; i++) {
-            ss >> depositos[i];
-            ss.ignore(); // Ignorar la coma
-        }
-
-        // Crear un producto con los datos leídos
-        Producto producto = {grupo, codigoBarras, nombre};
-        for (int i = 0; i < 5; i++) {
-            producto.depositos[i] = depositos[i];
-        }
-
-        // Insertar el producto en el árbol AVL
-        arbol.put(producto);
-    }
-
-    // Aquí puedes realizar otras operaciones con el árbol AVL
-
-    // Cerrar el archivo
-    archivo.close();
-
-    return 0;
-}
-*/
