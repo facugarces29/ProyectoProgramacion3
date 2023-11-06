@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <set>
 #include "ArbolAVL.h" //Supongo que aquí se incluirá el código del árbol AVL
 
 using namespace std;
@@ -54,16 +55,80 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
     return datos;
 }
 
-int main(){
+int cantidadTotalArticulos(const vector<vector<string>>& datos) {
+    return datos.size();
+}
+
+int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
+    set<string> codigosBarras;
+
+    for (const vector<string>& fila : datos) {
+        string codigoBarras = fila[1]; // Suponiendo que la columna del código de barras es la segunda (índice 1)
+        codigosBarras.insert(codigoBarras);
+    }
+
+    return codigosBarras.size();
+}
+
+void listarArticulosMinimoStock(const vector<vector<string>>& datos, int minStock) {
+    cout << "Artículos con stock igual o menor a " << minStock << ":" << endl;
+
+    for (const vector<string>& fila : datos) {
+        int stock = stoi(fila[3]); // La cantidad de stock está en la cuarta columna (índice 3)
+        
+        if (stock <= minStock) {
+            cout << "Código: " << fila[1] << ", Nombre: " << fila[2] << ", Stock: " << stock << endl;
+        }
+    }
+}
+
+void stockIndividualArticulo(const vector<vector<string>>& datos, const string& nombreArticulo) {
+    cout << "Stock individual del artículo '" << nombreArticulo << "':" << endl;
+
+    for (const vector<string>& fila : datos) {
+        if (fila[2] == nombreArticulo) { // La columna del nombre del artículo es la tercera (índice 2)
+            cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
+        }
+    }
+}
+void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
+    if (argc < 3) {
+        cerr << "Uso: " << argv[0] << " [Argumentos] inventariofisico.csv" << endl;
+        return;
+    }
+
+    string operacion = argv[1];
+    string archivoCSV = argv[2];
+
+    if (operacion == "-total_art_dif") {
+        int totalDiferentes = cantidadTotalArticulosDiferentes(datos);
+        cout << "Cantidad total de artículos diferentes: " << totalDiferentes << std::endl;
+    } else if (operacion == "-total_art") {
+        int totalArticulos = cantidadTotalArticulos(datos);
+        cout << "Cantidad total de artículos: " << totalArticulos << std::endl;
+    } else if (operacion == "-min_stock") {
+        if (argc >= 4) {
+            int minStock = std::stoi(argv[3]);
+            listarArticulosMinimoStock(datos, minStock);
+        } else {
+            std::cerr << "Falta el valor de stock mínimo." << std::endl;
+        }
+    } else if (operacion == "-stock") {
+        if (argc >= 4) {
+            string nombreArticulo = argv[3];
+            stockIndividualArticulo(datos, nombreArticulo);
+        } else {
+            std::cerr << "Falta el nombre del artículo." << std::endl;
+        }
+    } else {
+        std::cerr << "Operación no válida." << std::endl;
+    }
+}
+int main(int argc, char* argv[]) {
     string nombreArchivo = "Inventariado_Fisico.csv";
     vector<vector<string>> datos = leerArchivoCSV(nombreArchivo);
 
-        for (const auto& fila : datos) {
-        for (const auto& valor : fila) {
-            cout << valor << " ";
-        }
-        cout << endl;
-    }
+    procesarArgumentos(argc, argv, datos);
 
     return 0;
 }
