@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-
+#include <vector>
 #include "ArbolAVL.h" //Supongo que aquí se incluirá el código del árbol AVL
 
 using namespace std;
@@ -17,19 +17,69 @@ struct Producto {
     bool operator<(const Producto& other) const {
         return codigoBarras < other.codigoBarras;
     }
+
+     // Operador de igualdad para comparar productos por igualdad
+    bool operator==(const Producto& other) const {
+        return codigoBarras == other.codigoBarras;
+    }
+
+    // Operador de comparación para comparar productos por ordenamiento (>)
+    bool operator>(const Producto& other) const {
+        return codigoBarras > other.codigoBarras;
+    }
 };
 
+vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
+    vector<vector<string>> datos;
+
+    ifstream archivo(nombreArchivo);
+    if (!archivo.is_open()) {
+        cerr << "Error al abrir el archivo." <<endl;
+        return datos;
+    }
+
+    string linea, valor;
+    while (getline(archivo, linea)) {
+        vector<string> fila;
+        stringstream ss(linea);
+
+        while (getline(ss, valor, ',')) {
+            fila.push_back(valor);
+        }
+
+        datos.push_back(fila);
+    }
+
+    archivo.close();
+    return datos;
+}
+
+int main(){
+    string nombreArchivo = "Inventariado_Fisico.csv";
+    vector<vector<string>> datos = leerArchivoCSV(nombreArchivo);
+
+        for (const auto& fila : datos) {
+        for (const auto& valor : fila) {
+            cout << valor << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+
+/*
 int main() {
     // Crear el árbol AVL
     ArbolBinarioAVL<Producto> arbol;
 
     // Nombre del archivo CSV
-    string archivoCSV = "Inventario_Fisico.csv";
+    string archivoCSV = "Inventariado_Fisico.csv";
 
     // Abrir el archivo
     ifstream archivo(archivoCSV);
 
-    if (!archivo.is_open()) {
+   if (!archivo.is_open()) {
         cout << "Error al abrir el archivo CSV." << endl;
         return 1;
     }
@@ -72,3 +122,4 @@ int main() {
 
     return 0;
 }
+*/
