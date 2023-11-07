@@ -130,6 +130,85 @@ int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
 };
 
 
+//Listar articulos min
+//-min_stock
+void MinStock(const vector<vector<string>>& datos, int n) {
+    ArbolBinarioAVL<string> arbol;
+
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 5) {
+            string nombreArticulo = fila[2]; // Suponiendo que la columna del nombre del artículo es la tercera (índice 2)
+            int stock = convertir_a_entero(fila[5]); // Suponiendo que la columna del stock es la sexta (índice 5)
+            if (stock != -1) {
+                arbol.put(nombreArticulo);
+            }
+        }
+    }
+
+    arbol.inorder(); // Esto imprimirá los artículos en orden (puedes modificarlo para mostrarlos de la forma que necesites)
+}
+
+// Función para obtener el stock del artículo en un depósito.
+void stockDepositoArticulo(const vector<vector<string>>& datos, const string& nombreArticulo, int deposito) {
+    cout << "Stock del artículo '" << nombreArticulo << "' en el depósito " << deposito << ":" << endl;
+    int stockDeposito = 0;
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 2) {
+            if (fila[2] == nombreArticulo && fila.size() >= 4 && esEnteroValido(fila[3])) {
+                int stock = convertir_a_entero(fila[3]);
+                if (stock != -1) {
+                    vector<int> depositos;
+                    istringstream ss(fila[4]);
+                    string depositoStr;
+                    while (getline(ss, depositoStr, '|')) {
+                        depositos.push_back(convertir_a_entero(depositoStr));
+                    }
+                    if (find(depositos.begin(), depositos.end(), deposito) != depositos.end()) {
+                        cout << "Nombre: " << fila[2] << ", Stock: " << stock << endl;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Función para listar artículos cuyo stock es igual o supera el número n.
+void listarArticulosMaxStock(const vector<vector<string>>& datos, int maxStock) {
+    cout << "Artículos con stock igual o superior a " << maxStock << ":" << endl;
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4 && esEnteroValido(fila[3])) {
+            int stock = convertir_a_entero(fila[3]);
+            if (stock != -1 && stock >= maxStock) {
+                cout << "Nombre: " << fila[2] << ", Stock: " << stock << endl;
+            }
+        }
+    }
+}
+
+// Función para listar artículos con cantidad n o menos de stock según un depósito y nombre de artículo.
+void listarArticulosMinimoStockDeposito(const vector<vector<string>>& datos, const string& nombreArticulo, int n, int deposito) {
+    cout << "Artículos con stock igual o menor a " << n << " en el depósito " << deposito << " para el artículo '" << nombreArticulo << "':" << endl;
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4 && esEnteroValido(fila[3]) && fila.size() >= 2) {
+            int stock = convertir_a_entero(fila[3]);
+            if (stock != -1) {
+                vector<int> depositos;
+                istringstream ss(fila[4]);
+                string depositoStr;
+                while (getline(ss, depositoStr, '|')) {
+                    depositos.push_back(convertir_a_entero(depositoStr));
+                }
+                // Comparar el nombre con el miembro 'nombre' de la estructura Producto
+                if (stock <= n && find(depositos.begin(), depositos.end(), deposito) != depositos.end() && nombreArticulo == fila[2]) {
+                    cout << "Nombre: " << fila[2] << ", Stock: " << stock << endl;
+                }
+            }
+        }
+    }
+}
+
+
+//procesa los argumentos
 //procesa los argumentos
 void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
     if (argc < 3) {
@@ -146,11 +225,53 @@ void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& da
     } else if (operacion == "-total_art") {
         int totalArticulos = cantidadTotalArticulos(datos);
         cout << "Cantidad total de artículos: " << totalArticulos << std::endl;
-
+    } else if (operacion == "-min_stock") {
+        if (argc >= 4 && esEnteroValido(argv[3])) {
+            int n = convertir_a_entero(argv[3]);
+            MinStock(datos, n);
+        } else {
+            cerr << "Argumento inválido para -min_stock." << endl;
+        }
+    } else if (operacion == "-Stock_Deposito") {
+        if (argc >= 5) {
+            string nombreArticulo = argv[3];
+            if (esEnteroValido(argv[4])) {
+                int deposito = convertir_a_entero(argv[4]);
+                stockDepositoArticulo(datos, nombreArticulo, deposito);
+            } else {
+                cerr << "Argumento inválido para número de depósito." << endl;
+            }
+        } else {
+            cerr << "Faltan argumentos para -Stock_Deposito." << endl;
+        }
+    } else if (operacion == "-listar_max_stock") {
+        if (argc >= 4 && esEnteroValido(argv[3])) {
+            int maxStock = convertir_a_entero(argv[3]);
+            listarArticulosMaxStock(datos, maxStock);
+        } else {
+            cerr << "Argumento inválido para -listar_max_stock." << endl;
+        }
+    } else if (operacion == "-listar_min_stock_dep") {
+        if (argc >= 5) {
+            string nombreArticulo = argv[3];
+            if (argc >= 6 && esEnteroValido(argv[4])) {
+                int n = convertir_a_entero(argv[4]);
+                if (esEnteroValido(argv[5])) {
+                    int deposito = convertir_a_entero(argv[5]);
+                    listarArticulosMinimoStockDeposito(datos, nombreArticulo, n, deposito);
+                } else {
+                    cerr << "Argumento inválido para número de depósito." << endl;
+                }
+            } else {
+                cerr << "Argumento inválido para cantidad mínima de stock." << endl;
+            }
+        } else {
+            cerr << "Faltan argumentos para -listar_min_stock_dep." << endl;
+        }
     } else {
         std::cerr << "Operación no válida." << std::endl;
     }
-};
+}
 
 void mostrarDatosCSV(const vector<vector<string>>& datos) {
     for (const vector<string>& fila : datos) {
@@ -167,7 +288,7 @@ int main(int argc, char* argv[]) {
 
     // Procesar argumentos
     procesarArgumentos(argc, argv, datos);
-    //mostrarDatosCSV(datos);
+    mostrarDatosCSV(datos);
     return 0;
 }
 
