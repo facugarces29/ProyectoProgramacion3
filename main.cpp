@@ -93,7 +93,8 @@ int convertir_a_entero(const string& str) {
     }
     return -1;
 };
-
+//Muestra la cantidad de articulos totales
+//-total_art
 int cantidadTotalArticulos(const vector<vector<string>>& datos) {
     int total = 0;
     for (const vector<string>& fila : datos) {
@@ -112,6 +113,9 @@ int cantidadTotalArticulos(const vector<vector<string>>& datos) {
     }
     return total;
 }
+
+//Muestra la cantidad Diferentes de articulos
+//-total_art_dif
 int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     set<string> codigosBarras;
 
@@ -125,57 +129,8 @@ int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     return codigosBarras.size();
 };
 
-void listarArticulosMinimoStock(const vector<vector<string>>& datos, int minStock, ArbolBinarioAVL<Producto>& miArbol) {
-    cout << "Artículos con stock igual o menor a " << minStock << ":" << endl;
 
-    // Recorrer los datos del archivo CSV
-    for (const vector<string>& fila : datos) {
-        if (fila.size() >= 4) { // Asegurarse de que haya al menos 4 elementos en la fila (columnas necesarias)
-            string codigoBarras = fila[1];
-            if (esEnteroValido(fila[3])) { // Verificar que el stock sea un número válido
-                int stock = stoi(fila[3]);
-
-                // Crear un objeto Producto y agregarlo al árbol AVL
-                Producto nuevoProducto;
-                nuevoProducto.codigoBarras = codigoBarras;
-                nuevoProducto.nombre = fila[2]; // Suponiendo que la columna 2 contiene el nombre del producto
-                nuevoProducto.depositos = {convertir_a_entero(fila[3])}; // Suponiendo que la columna 3 contiene el depósito
-
-                miArbol.put(nuevoProducto);
-            }
-        }
-    }
-}
-
-void stockIndividualArticulo(const vector<vector<string>>& datos, const string& nombreArticulo) {
-    cout << "Stock individual del artículo '" << nombreArticulo << "':" << endl;
-
-    for (const vector<string>& fila : datos) {
-        if (fila.size() >= 4) {
-            if (fila[2] == nombreArticulo) { // La columna del nombre del artículo es la tercera (índice 2)
-                cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
-            }
-        }
-    }
-}
-
-
-// -max_Stock [n] 
-void stockDepositoArticulo(const vector<vector<string>>& datos, const string& nombreArticulo, int deposito) {
-    cout << "Stock del artículo '" << nombreArticulo << "' en el depósito " << deposito << ":" << endl;
-
-    for (const vector<string>& fila : datos) {
-        if (fila.size() >= 4) {
-            if (fila[2] == nombreArticulo && esEnteroValido(fila[0])) {
-                int dep = convertir_a_entero(fila[0]);
-                if (dep == deposito) {
-                    cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
-                }
-            }
-        }
-    }
-}
-
+//procesa los argumentos
 void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
     if (argc < 3) {
         cerr << "Uso: " << argv[0] << " [Argumentos] Inventariado_Fisico.csv" << endl;
@@ -191,21 +146,7 @@ void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& da
     } else if (operacion == "-total_art") {
         int totalArticulos = cantidadTotalArticulos(datos);
         cout << "Cantidad total de artículos: " << totalArticulos << std::endl;
-    } else if (operacion == "-min_stock") {
-        if (argc >= 4) {
-            int minStock = std::stoi(argv[3]);
-            ArbolBinarioAVL<Producto> miArbol;
-            listarArticulosMinimoStock(datos, minStock, miArbol);
-        } else {
-            std::cerr << "Falta el valor de stock mínimo." << std::endl;
-        }
-    } else if (operacion == "-stock") {
-        if (argc >= 4) {
-            string nombreArticulo = argv[3];
-            stockIndividualArticulo(datos, nombreArticulo);
-        } else {
-            std::cerr << "Falta el nombre del artículo." << std::endl;
-        }
+
     } else {
         std::cerr << "Operación no válida." << std::endl;
     }
