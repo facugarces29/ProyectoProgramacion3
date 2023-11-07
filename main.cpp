@@ -136,7 +136,7 @@ void MinStock(const vector<vector<string>>& datos, int n) {
     ArbolBinarioAVL<string> arbol;
 
     for (const vector<string>& fila : datos) {
-        if (fila.size() >= 5) {
+        if (fila.size() >= 3) {
             string nombreArticulo = fila[2]; // Suponiendo que la columna del nombre del artículo es la tercera (índice 2)
             int stock = convertir_a_entero(fila[5]); // Suponiendo que la columna del stock es la sexta (índice 5)
             if (stock != -1) {
