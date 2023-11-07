@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <set>
+#include <algorithm>
 #include "ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
 
 using namespace std;
@@ -26,6 +27,10 @@ struct Producto {
         return codigoBarras > other.codigoBarras;
     }
 };
+void reemplazarCaracteres(string& str) {
+    replace(str.begin(), str.end(), '/', ' ');
+    replace(str.begin(), str.end(), '-', ' ');
+};
 
 vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
     vector<vector<string>> datos;
@@ -39,12 +44,25 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
     string linea, valor;
     getline(archivo, linea); // Ignorar la primera línea
 
-
     while (getline(archivo, linea)) {
+        // Reemplazar '/' y '-' en la línea
+        replace(linea.begin(), linea.end(), '/', ' ');
+        replace(linea.begin(), linea.end(), '-', ' ');
+        replace(linea.begin(), linea.end(), '.',' ');
+
+        // Verificar si la línea contiene la palabra "error"
+        if (linea.find("error"||"ERROR") != string::npos) {
+            continue; // Si contiene "error", se salta la línea
+        }
+
         vector<string> fila;
         stringstream ss(linea);
 
         while (getline(ss, valor, ',')) {
+            // Reemplazar celdas vacías con "null"
+            if (valor.empty()) {
+                valor = "null";
+            }
             fila.push_back(valor);
         }
 
@@ -53,16 +71,17 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
 
     archivo.close();
     return datos;
-};
+}
+
 
 bool esEnteroValido(const std::string& str) {
-    for (char c : str) 
+    for (char c : str) {
         if (!std::isdigit(c)) {
             return false;
         }
     }
     return true;
-};
+}
 
 int convertir_a_entero(const string& str) {
     try {
@@ -78,10 +97,14 @@ int convertir_a_entero(const string& str) {
 int cantidadTotalArticulos(const vector<vector<string>>& datos) {
     int total = 0;
     for (const vector<string>& fila : datos) {
-        if (fila.size() >= 4 && esEnteroValido(fila[3])) { 
-            int stock = convertir_a_entero(fila[3]); // Intentamos convertir a entero
-            if (stock != -1) { // Verificar si la conversión fue exitosa
-                total += stock;
+        if (fila.size() >= 5) { 
+            for (int i = 3; i <= 7; ++i) {
+                if (!fila[i].empty() && esEnteroValido(fila[i])) { 
+                    int stock = convertir_a_entero(fila[i]); 
+                    if (stock != -1) {
+                        total += stock;
+                    }
+                }
             }
         } else {
             cerr << "Fila incompleta, no se pudo contar el stock." << endl;
@@ -89,7 +112,6 @@ int cantidadTotalArticulos(const vector<vector<string>>& datos) {
     }
     return total;
 }
-
 int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     set<string> codigosBarras;
 
@@ -132,6 +154,23 @@ void stockIndividualArticulo(const vector<vector<string>>& datos, const string& 
         if (fila.size() >= 4) {
             if (fila[2] == nombreArticulo) { // La columna del nombre del artículo es la tercera (índice 2)
                 cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
+            }
+        }
+    }
+}
+
+
+// -max_Stock [n] 
+void stockDepositoArticulo(const vector<vector<string>>& datos, const string& nombreArticulo, int deposito) {
+    cout << "Stock del artículo '" << nombreArticulo << "' en el depósito " << deposito << ":" << endl;
+
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4) {
+            if (fila[2] == nombreArticulo && esEnteroValido(fila[0])) {
+                int dep = convertir_a_entero(fila[0]);
+                if (dep == deposito) {
+                    cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
+                }
             }
         }
     }
@@ -187,7 +226,7 @@ int main(int argc, char* argv[]) {
 
     // Procesar argumentos
     procesarArgumentos(argc, argv, datos);
-
+    //mostrarDatosCSV(datos);
     return 0;
 }
 
