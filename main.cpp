@@ -56,7 +56,7 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
 };
 
 bool esEnteroValido(const std::string& str) {
-    for (char c : str) {
+    for (char c : str) 
         if (!std::isdigit(c)) {
             return false;
         }
@@ -64,16 +64,31 @@ bool esEnteroValido(const std::string& str) {
     return true;
 };
 
-int convertir_a_entero(const std::string& str) {
+int convertir_a_entero(const string& str) {
     try {
-        return std::stoi(str);
-    } catch (const std::invalid_argument& e) {
-        std::cerr << "Error al convertir a entero: " << e.what() << std::endl;
-    } catch (const std::out_of_range& e) {
-        std::cerr << "Error: Desbordamiento de rango. " << e.what() << std::endl;
+        return stoi(str);
+    } catch (const invalid_argument& e) {
+        cerr << "Error al convertir a entero: " << e.what() << endl;
+    } catch (const out_of_range& e) {
+        cerr << "Error: Desbordamiento de rango. " << e.what() << endl;
     }
     return -1;
 };
+
+int cantidadTotalArticulos(const vector<vector<string>>& datos) {
+    int total = 0;
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4 && esEnteroValido(fila[3])) { 
+            int stock = convertir_a_entero(fila[3]); // Intentamos convertir a entero
+            if (stock != -1) { // Verificar si la conversión fue exitosa
+                total += stock;
+            }
+        } else {
+            cerr << "Fila incompleta, no se pudo contar el stock." << endl;
+        }
+    }
+    return total;
+}
 
 int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     set<string> codigosBarras;
@@ -102,7 +117,7 @@ void listarArticulosMinimoStock(const vector<vector<string>>& datos, int minStoc
                 Producto nuevoProducto;
                 nuevoProducto.codigoBarras = codigoBarras;
                 nuevoProducto.nombre = fila[2]; // Suponiendo que la columna 2 contiene el nombre del producto
-                nuevoProducto.depositos = {convertir_a_entero(fila[0])}; // Suponiendo que la columna 0 contiene el depósito
+                nuevoProducto.depositos = {convertir_a_entero(fila[3])}; // Suponiendo que la columna 3 contiene el depósito
 
                 miArbol.put(nuevoProducto);
             }
@@ -135,8 +150,8 @@ void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& da
         int totalDiferentes = cantidadTotalArticulosDiferentes(datos);
         cout << "Cantidad total de artículos diferentes: " << totalDiferentes << std::endl;
     } else if (operacion == "-total_art") {
-        // Total de artículos ya se calcula en la función principal, no es necesario repetirlo aquí.
-        cerr << "Operación no válida." << std::endl;
+        int totalArticulos = cantidadTotalArticulos(datos);
+        cout << "Cantidad total de artículos: " << totalArticulos << std::endl;
     } else if (operacion == "-min_stock") {
         if (argc >= 4) {
             int minStock = std::stoi(argv[3]);
@@ -167,7 +182,7 @@ void mostrarDatosCSV(const vector<vector<string>>& datos) {
 }
 
 int main(int argc, char* argv[]) {
-    string nombreArchivo = "../Inventariado_Fisico.csv";
+    string nombreArchivo = "Inventariado_Fisico.csv";
     vector<vector<string>> datos = leerArchivoCSV(nombreArchivo);
 
     // Procesar argumentos
