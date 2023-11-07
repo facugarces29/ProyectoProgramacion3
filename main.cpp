@@ -73,7 +73,7 @@ vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
     return datos;
 }
 
-
+//Funcion para validar los enteros
 bool esEnteroValido(const std::string& str) {
     for (char c : str) {
         if (!std::isdigit(c)) {
@@ -82,7 +82,7 @@ bool esEnteroValido(const std::string& str) {
     }
     return true;
 }
-
+//cConvierte los string al int
 int convertir_a_entero(const string& str) {
     try {
         return stoi(str);
@@ -120,7 +120,7 @@ int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     set<string> codigosBarras;
 
     for (const vector<string>& fila : datos) {
-        if (fila.size() >= 2) { // Verificar que haya al menos 2 elementos en la fila (para obtener el código de barras)
+        if (fila.size() >= 3) { // Verificar que haya al menos 3 elementos en la fila (para obtener el código de barras)
             string codigoBarras = fila[1]; // Suponiendo que la columna del código de barras es la segunda (índice 1)
             codigosBarras.insert(codigoBarras);
         }
@@ -208,8 +208,7 @@ void listarArticulosMinimoStockDeposito(const vector<vector<string>>& datos, con
 }
 
 
-//procesa los argumentos
-//procesa los argumentos
+//procesa los argumentos que son ingresados por consola y los redirije hacia la funcion que sea solicitada
 void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
     if (argc < 3) {
         cerr << "Uso: " << argv[0] << " [Argumentos] Inventariado_Fisico.csv" << endl;
@@ -288,7 +287,8 @@ int main(int argc, char* argv[]) {
 
     // Procesar argumentos
     procesarArgumentos(argc, argv, datos);
-    mostrarDatosCSV(datos);
+    //Funcion para comprobar los datos del archivo.csv  
+    //mostrarDatosCSV(datos);
     return 0;
 }
 
