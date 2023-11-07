@@ -129,6 +129,59 @@ int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     return codigosBarras.size();
 };
 
+<<<<<<< HEAD
+=======
+void listarArticulosMinimoStock(const vector<vector<string>>& datos, int minStock, ArbolBinarioAVL<Producto>& miArbol) {
+    cout << "Artículos con stock igual o menor a " << minStock << ":" << endl;
+
+    // Recorrer los datos del archivo CSV
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4) { // Asegurarse de que haya al menos 4 elementos en la fila (columnas necesarias)
+            string codigoBarras = fila[1];
+            if (esEnteroValido(fila[3])) { // Verificar que el stock sea un número válido
+                int stock = stoi(fila[3]);
+
+                // Crear un objeto Producto y agregarlo al árbol AVL
+                Producto nuevoProducto;
+                nuevoProducto.codigoBarras = codigoBarras;
+                nuevoProducto.nombre = fila[2]; // Suponiendo que la columna 2 contiene el nombre del producto
+                nuevoProducto.depositos = {convertir_a_entero(fila[3])}; // Suponiendo que la columna 3 contiene el depósito
+
+                miArbol.put(nuevoProducto);
+            }
+        }
+    }
+}
+
+void stockIndividualArticulo(const vector<vector<string>>& datos, const string& nombreArticulo) {
+    cout << "Stock individual del artículo '" << nombreArticulo << "':" << endl;
+
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4) {
+            if (fila[2] == nombreArticulo) { // La columna del nombre del artículo es la tercera (índice 2)
+                cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
+            }
+        }
+    }
+}
+
+
+// -stock [nombre_articulo], [deposito] 
+void stockDepositoArticulo(const vector<vector<string>>& datos, const string& nombreArticulo, int deposito) {
+    cout << "Stock del artículo '" << nombreArticulo << "' en el depósito " << deposito << ":" << endl;
+
+    for (const vector<string>& fila : datos) {
+        if (fila.size() >= 4) {
+            if (fila[2] == nombreArticulo && esEnteroValido(fila[0])) {
+                int dep = convertir_a_entero(fila[0]);
+                if (dep == deposito) {
+                    cout << "Depósito: " << fila[0] << ", Stock: " << fila[3] << endl;
+                }
+            }
+        }
+    }
+}
+>>>>>>> 37ad7bd07f0f64baa72b8f6a39406933b068f730
 
 //procesa los argumentos
 void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
