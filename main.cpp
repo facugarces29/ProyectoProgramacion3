@@ -160,7 +160,7 @@ void stockIndividualArticulo(const vector<vector<string>>& datos, const string& 
 }
 
 
-// -max_Stock [n] 
+// -stock [nombre_articulo], [deposito] 
 void stockDepositoArticulo(const vector<vector<string>>& datos, const string& nombreArticulo, int deposito) {
     cout << "Stock del artículo '" << nombreArticulo << "' en el depósito " << deposito << ":" << endl;
 
