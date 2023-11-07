@@ -10,10 +10,13 @@
 using namespace std;
 
 struct Producto {
-    string grupo;
-    string codigoBarras;
+    string grupo;                           // Operadores de comparación para poder ordenar
+    string codigoBarras;                    // y comparar productos.
     string nombre;
     vector<int> depositos;
+
+    // Operadores de comparación para poder ordenar
+    // y comparar productos.
 
     bool operator<(const Producto& other) const {
         return codigoBarras < other.codigoBarras;
@@ -27,11 +30,8 @@ struct Producto {
         return codigoBarras > other.codigoBarras;
     }
 };
-void reemplazarCaracteres(string& str) {
-    replace(str.begin(), str.end(), '/', ' ');
-    replace(str.begin(), str.end(), '-', ' ');
-};
 
+// Esta función lee un archivo CSV y devuelve una matriz de cadenas 'datos
 vector<vector<string>> leerArchivoCSV(const string& nombreArchivo) {
     vector<vector<string>> datos;
 
@@ -272,7 +272,7 @@ void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& da
         std::cerr << "Operación no válida." << std::endl;
     }
 }
-
+//Funcion para poder chequear los datos del .csv
 void mostrarDatosCSV(const vector<vector<string>>& datos) {
     for (const vector<string>& fila : datos) {
         for (const string& valor : fila) {
@@ -281,7 +281,7 @@ void mostrarDatosCSV(const vector<vector<string>>& datos) {
         cout << endl;
     }
 }
-
+//Programa principal
 int main(int argc, char* argv[]) {
     string nombreArchivo = "Inventariado_Fisico.csv";
     vector<vector<string>> datos = leerArchivoCSV(nombreArchivo);
