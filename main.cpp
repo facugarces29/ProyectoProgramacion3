@@ -5,7 +5,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
-#include "ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
+#include "Arbol/ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
 
 using namespace std;
 
@@ -130,7 +130,7 @@ int cantidadTotalArticulosDiferentes(const vector<vector<string>>& datos) {
     return codigosBarras.size();
 };
 
-
+/*
 //Listar articulos min
 //-min_stock
 void MinStock(const vector<vector<string>>& datos, int n) {
@@ -207,7 +207,7 @@ void listarArticulosMinimoStockDeposito(const vector<vector<string>>& datos, con
         }
     }
 }
-
+*/
 
 //procesa los argumentos que son ingresados por consola y los redirije hacia la funcion que sea solicitada
 void procesarArgumentos(int argc, char* argv[], const vector<vector<string>>& datos) {
@@ -283,13 +283,13 @@ void mostrarDatosCSV(const vector<vector<string>>& datos) {
 }
 //Programa principal
 int main(int argc, char* argv[]) {
-    string nombreArchivo = "Inventariado_Fisico.csv";
+    string nombreArchivo = "CSV/prueba.csv";
     vector<vector<string>> datos = leerArchivoCSV(nombreArchivo);
 
     // Procesar argumentos
     procesarArgumentos(argc, argv, datos);
     //Funcion para comprobar los datos del archivo.csv  
-    //mostrarDatosCSV(datos);
+    mostrarDatosCSV(datos);
     return 0;
 }
 
