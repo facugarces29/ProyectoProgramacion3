@@ -6,7 +6,6 @@
 #include <set>
 #include <algorithm>
 #include "ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
-#include "../HashMap/"
 
 using namespace std;
 
@@ -15,7 +14,6 @@ struct Producto {
     string codigoBarras;                    // y comparar productos.
     string nombre;
     vector<int> depositos;
-
     // Operadores de comparación para poder ordenar
     // y comparar productos.
 
@@ -94,6 +92,8 @@ int convertir_a_entero(const string& str) {
     }
     return -1;
 };
+
+
 //Muestra la cantidad de articulos totales
 //-total_art
 int cantidadTotalArticulos(const vector<vector<string>>& datos) {
