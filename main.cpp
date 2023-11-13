@@ -6,6 +6,7 @@
 #include <set>
 #include <algorithm>
 #include "ArbolAVL.h" // Supongo que aquí se incluirá el código del árbol AVL
+#include "../HashMap/"
 
 using namespace std;
 
